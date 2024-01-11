@@ -10,7 +10,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def create_figure(figsize=(10,7), dpi=360):
+def create_figure(figsize=(5,5), dpi=100):
     fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
     return fig, ax
 
