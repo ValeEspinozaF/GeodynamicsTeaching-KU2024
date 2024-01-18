@@ -7,9 +7,24 @@ Created on Fri Dec 29 16:44:35 2023
 
 import os
 import numpy as np
+from math import sin, cos, atan2, sqrt, radians
 
 from tpx_dependencies import load_TPX, add_colorbar
+from figure_dependencies import create_figure
 
+def basic_map(figsize=(5,5), dpi=100,
+              xlim=(-180, 180),
+              ylim=(-90, 90)):
+    
+    fig, ax = create_figure(figsize, dpi)
+    add_plates(fig, ax)
+    add_coastlines(fig, ax)
+    ax.set(xlim=xlim, ylim=ylim)
+    set_map(fig, ax)
+    
+    return fig, ax
+    
+    
 
 def set_map(fig, ax):
     
@@ -99,6 +114,8 @@ def add_topography(fig, ax,
     # Finish map
     set_map(fig, ax)
     
+    return im
+    
     
     
 def add_gravity(fig, ax,
@@ -124,6 +141,29 @@ def add_gravity(fig, ax,
     
     # Finish map    
     set_map(fig, ax)
+    
+    return im
+
+
+def geodesic_distance(point1_lon, point1_lat, point2_lon, point2_lat):
+    
+    """ Calculates the geodetic distance between two point on a sphere,
+    based on the Vincenty inverse problem formula. """
+    
+    Re = 6371e3 # Earth's radius
+    
+    # Turn input coordinates from sph to radians
+    lat1, lon1 = radians(point1_lat), radians(point1_lon)
+    lat2, lon2 = radians(point2_lat), radians(point2_lon)
+
+    a = cos(lat2)*sin(abs(lon2 - lon1))
+    b = cos(lat1)*sin(lat2) - sin(lat1)*cos(lat2)*cos(abs(lon2 - lon1))
+    c = sin(lat1)*sin(lat2) + cos(lat1)*cos(lat2)*cos(abs(lon2 - lon1))
+    
+    # Geodetic distance in meters
+    distance = Re * atan2( sqrt(a*a+b*b),c )
+    
+    return distance
 
 
 def setCartographic_AxisLabels(ax):
