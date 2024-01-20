@@ -145,12 +145,14 @@ def add_gravity(fig, ax,
     return im
 
 
-def geodesic_distance(point1_lon, point1_lat, point2_lon, point2_lat):
+
+def geodesic_distance(point1_lon, point1_lat, 
+                      point2_lon, point2_lat,
+                      radius = 6371e3):
     
-    """ Calculates the geodetic distance between two point on a sphere,
+    """ Calculates the geodesic distance between two point on a sphere,
     based on the Vincenty inverse problem formula. """
     
-    Re = 6371e3 # Earth's radius
     
     # Turn input coordinates from sph to radians
     lat1, lon1 = radians(point1_lat), radians(point1_lon)
@@ -161,9 +163,10 @@ def geodesic_distance(point1_lon, point1_lat, point2_lon, point2_lat):
     c = sin(lat1)*sin(lat2) + cos(lat1)*cos(lat2)*cos(abs(lon2 - lon1))
     
     # Geodetic distance in meters
-    distance = Re * atan2( sqrt(a*a+b*b),c )
+    distance = radius * atan2( sqrt(a**2 + b**2), c )
     
     return distance
+
 
 
 def setCartographic_AxisLabels(ax):

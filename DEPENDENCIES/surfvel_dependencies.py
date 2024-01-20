@@ -55,8 +55,7 @@ def sph2cart(lon_deg, lat_deg, mag=1):
 
 
 def cart2sph(x_cart, y_cart, z_cart, out_fmt="deg"):
-    """
-    
+    """ Transforms cartesian to spherical coordinates.
 
     Parameters
     ----------
@@ -70,7 +69,9 @@ def cart2sph(x_cart, y_cart, z_cart, out_fmt="deg"):
     Returns
     -------
     lon, lat, mag : float or array
-        Spherical coordinates.
+        Spherical coordinates with longitude and latitude in degrees or
+        radians, and magnitude in the same unit of measurement as the input
+        cartesian coordinates.
     """
     x_cart = np.asarray(x_cart)
     y_cart = np.asarray(y_cart)
@@ -106,7 +107,7 @@ def ev_to_surfvel_eastnorth(ev_cart, pnt_lon, pnt_lat):
 
     Parameters
     ----------
-    Ev_xyz : list or array
+    ev_cart : list or array
         Cartesian coordinates of the Euler vector (wx, wy, wz) in [deg/Myr].
     lat_deg : float or int
         Spherical latitude of a point on the Earth surface, in [degrees].
@@ -192,11 +193,35 @@ def eastnorth_to_azimuth(v_east, v_north):
 
 
 def eastnorth_to_total(v_east, v_north):
-    
     # Calculate total surface velocity
+    
     v_total = np.sqrt(v_east**2 + v_north**2)
     return v_total
 
+
+def ev_to_surfvel_total(ev_cart, pnt_lon, pnt_lat):
+    """
+    Calculates the surface velocity for a given spherical coordinate in 
+    the globe, and an Euler vector.
+
+    Parameters
+    ----------
+    ev_cart : list or array
+        Cartesian coordinates of the Euler vector (wx, wy, wz) in [deg/Myr].
+    lat_deg : float or int
+        Spherical latitude of a point on the Earth surface, in [degrees].
+    lon_deg : float or int
+        Spherical longitude of a point on the Earth surface, in [degrees].
+
+    Returns
+    -------
+    v_total
+        Total surface velocity in [cm/yr].
+
+    """
+    v_east, v_north = ev_to_surfvel_eastnorth(ev_cart, pnt_lon, pnt_lat)
+    v_total = eastnorth_to_total(v_east, v_north)
+    return v_total
 
 
 def plot_surfvel_total(ax, torsvik_df, 
