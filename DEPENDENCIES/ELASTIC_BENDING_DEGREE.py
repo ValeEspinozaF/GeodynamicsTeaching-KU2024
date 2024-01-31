@@ -14,7 +14,7 @@ def elastic_bending_degree(elastic_thickness, density_crust=2700, density_mantle
     """
     This function quantifies the deflection degree of an elastic beam placed 
     on top of a viscous fluid. The maximum load is equivalent to the weight of 
-    a 1-km-thick crustal block.
+    a 1-km-thick crustal block. Based on Turcotte & Schubert (2014), Equation 5.125.
 
     Parameters
     ----------
@@ -38,31 +38,50 @@ def elastic_bending_degree(elastic_thickness, density_crust=2700, density_mantle
 
     """
     
-    g = 9.8
-    h0 = 1e3
-    E = 0.5e11
-    nu = 0.2
+    g = 9.8     # Gravity [m/s2]
+    h0 = 1e3    # Load height [m]
+    E = 0.5e11  # Young's modulus [Pa]
+    nu = 0.2    # Poisson's ratio
+    
     rho_c = density_crust
     rho_m = density_mantle
     Te = elastic_thickness
 
-    wl = np.linspace(0, 3000e3, 1000)
+    wl = np.linspace(0, 3000e3, 1000)   # Wavelength [m]
     degree = np.zeros((len(wl), 2))
     degree[:, 0] = wl
 
     d1 = h0 / (rho_m / rho_c - 1 + np.zeros(len(wl)))
     
-    D = (E * Te**3) / (12 * (1 - nu**2))
-    A = D / (rho_c * g) * (2 * np.pi / wl)**4
-    d2 = h0 / (rho_m / rho_c - 1 + A)
+    D = (E * Te**3) / (12 * (1 - nu**2))        # Flexural rigidity
+    A = D / (rho_c * g) * (2 * np.pi / wl)**4 
+    d2 = h0 / (rho_m / rho_c - 1 + A)        # Deflection 
 
-    degree[:, 1] = d2 / d1
+    degree[:, 1] = d2 / d1  # Degree of deflection
 
     return degree
 
 
 def plot_elastic_bending_degree(elastic_thickness_values, density_crust=2700, density_mantle=3300):
+    """
+    Plots wavelength versus deflection degree of an elastic beam placed 
+    on top of a viscous fluid. The maximum load is equivalent to the weight of 
+    a 1-km-thick crustal block. Based on Turcotte & Schubert (2014), Equation 5.125.
 
+    Parameters
+    ----------
+    elastic_thickness : float
+        Plate's elastic thickness, expressed in meters.
+    density_crust : float
+        Density of crust, expressed in kg/m**3. Default is 2700 kg/m**3.
+    density_mantle : float
+        Density of mantle, expressed in kg/m**3. Default is 3300 kg/m**3.
+
+    Returns
+    -------
+    fig, ax : matplotlib figure and axis objects
+        Figure and axis objects containing the plot.
+    """
     
     fig, ax = plt.subplots()
     
@@ -92,10 +111,11 @@ def plot_elastic_bending_degree(elastic_thickness_values, density_crust=2700, de
         
     for Te in elastic_thickness_values:
 
-        g = 9.8
-        h0 = 1e3
-        E = 0.5e11
-        nu = 0.2
+        g = 9.8     # Gravity [m/s2]
+        h0 = 1e3    # Load height [m]
+        E = 0.5e11  # Young's modulus [Pa]
+        nu = 0.2    # Poisson's ratio
+        
         rho_c = density_crust
         rho_m = density_mantle
         
@@ -106,8 +126,8 @@ def plot_elastic_bending_degree(elastic_thickness_values, density_crust=2700, de
 
         d1 = h0 / (rho_m / rho_c - 1 + np.zeros(len(wl)))
         
-        D = (E * Te**3) / (12 * (1 - nu**2))
-        A = D / (rho_c * g) * (2 * np.pi / wl)**4
+        D = (E * Te**3) / (12 * (1 - nu**2))    # Flexural rigidity
+        A = D / (rho_c * g) * (2 * np.pi / wl)**4   
         d2 = h0 / (rho_m / rho_c - 1 + A)
 
         elastic_bend_degree[:, 1] = d2 / d1

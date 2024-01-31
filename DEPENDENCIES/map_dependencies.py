@@ -169,6 +169,21 @@ def geodesic_distance(point1_lon, point1_lat,
 
 
 
+def shifted_point(point1_lon, point1_lat, azimuth, distance=15e-4):
+    """ Given a point on a sphere, generate another point located
+    along a line defined by an azimuth angle in degrees. """
+    
+    # Shifted point in radians
+    point2_lon = np.radians(point1_lon) + (np.radians(distance) * np.sin(np.radians(azimuth)))
+    point2_lat = np.radians(point1_lat) + (np.radians(distance) * np.cos(np.radians(azimuth))) 
+    
+    # Shifted point in degrees
+    point2_lat = np.degrees(point2_lat)
+    point2_lon = np.degrees(point2_lon)
+    
+    return point2_lon, point2_lat
+
+
 def setCartographic_AxisLabels(ax):
     
     # Ticks range

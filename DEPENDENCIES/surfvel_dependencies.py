@@ -219,11 +219,46 @@ def ev_to_surfvel_total(ev_cart, pnt_lon, pnt_lat):
         Total surface velocity in [cm/yr].
 
     """
+    
     v_east, v_north = ev_to_surfvel_eastnorth(ev_cart, pnt_lon, pnt_lat)
     v_total = eastnorth_to_total(v_east, v_north)
     return v_total
 
 
+def ev_to_surfvel_azimuth(ev_cart, dir_azimuth, pnt_lon, pnt_lat):
+    """
+    Calculates the surface velocity along a particular direction
+    for a given spherical coordinate in the globe, and an Euler vector.
+
+    Parameters
+    ----------
+    ev_cart : list or array
+        Cartesian coordinates of the Euler vector (wx, wy, wz) in [deg/Myr].
+    dir_azimuth : float or int
+        Direction azimuth, expressed in [degrees] clockwise from North.
+    lat_deg : float or int
+        Spherical latitude of a point on the Earth surface, in [degrees].
+    lon_deg : float or int
+        Spherical longitude of a point on the Earth surface, in [degrees].
+
+    Returns
+    -------
+    dir_velocity
+        Surface velocity along the given direction, in [cm/yr].
+
+    """    
+
+
+    v_east, v_north = ev_to_surfvel_eastnorth(ev_cart, pnt_lon, pnt_lat)
+    vel_vector = np.array([v_east, v_north])
+    
+    dir_vector = np.array([ np.sin(np.radians(dir_azimuth)),  np.cos(np.radians(dir_azimuth)) ])
+    dir_velocity = np.sum(vel_vector * dir_vector)
+    
+    return dir_velocity
+    
+    
+    
 def plot_surfvel_total(ax, torsvik_df, 
                        pnt_lon, pnt_lat, 
                        lineLabel = '',
