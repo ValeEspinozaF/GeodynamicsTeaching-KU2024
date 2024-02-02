@@ -15,6 +15,26 @@ from figure_dependencies import create_figure
 def basic_map(figsize=(5,5), dpi=100,
               xlim=(-180, 180),
               ylim=(-90, 90)):
+    """
+    Create a basic map with coastlines and plate boundaries.
+
+    Parameters
+    ----------
+    figsize : tuple, optional
+        Size of the figure in (width, height). Default is (5,5).
+    dpi : int, optional
+        Dots per inches. Determines the resolution (how many pixels) 
+        the figure comprises. Default is 100.
+    xlim : tuple, optional
+        Range of longitudes to be displayed in the figure. Default is (-180, 180).
+    ylim : tuple, optional
+        Range of latitudes to be displayed in the figure. Default is (-90, 90).
+
+    Returns
+    -------
+    fig, ax : matplotlib figure and axis objects
+        Objects necessary to modify and re-plot the map.
+    """
     
     fig, ax = create_figure(figsize, dpi)
     add_plates(fig, ax)
@@ -38,6 +58,23 @@ def add_coastlines(fig, ax,
                    line_color = "grey",
                    line_opacity = 1.0,
                    line_width = 1.0):
+    """
+    Add coastlines to a map.
+
+    Parameters
+    ----------
+    fig : matplotlib figure object
+        
+    ax : matplotlib axis object
+        
+    line_color : str, optional
+        Color of the line. Default is "grey".
+    line_opacity : float, optional
+        Opacity of the line (values from 0 to 1, 1 is no transparency). 
+        Default is 1.0.
+    line_width : float, optional
+        Width of the line. Default is 1.0.
+    """
     
     # Check if ax has already data drawn in it
     has_drawn = False
@@ -66,6 +103,23 @@ def add_plates(fig, ax,
                line_color = "black",
                line_opacity = 1.0,
                line_width = 1.2):
+    """
+    Add plate boundaries to a map.
+
+    Parameters
+    ----------
+    fig : matplotlib figure object
+        
+    ax : matplotlib axis object
+        
+    line_color : str, optional
+        Color of the line. Default is "grey".
+    line_opacity : float, optional
+        Opacity of the line (values from 0 to 1, 1 is no transparency). 
+        Default is 1.0.
+    line_width : float, optional
+        Width of the line. Default is 1.0.
+    """
     
     # Check if ax has already data drawn in it
     has_drawn = False
@@ -91,9 +145,33 @@ def add_plates(fig, ax,
 
 
 def add_topography(fig, ax,
-                   mountain="ANDES",
+                   mountain,
                    colormap="jet",
                    map_range=[-5, 5]):
+    """
+    Add topography to a map.
+
+    Parameters
+    ----------
+    fig : matplotlib figure object
+        
+    ax : matplotlib axis object
+    
+    mountain : str, optional
+        Keyword for the orogen. Available options are "ANDES", "CENTRAL_ROCKIES",
+        "NORTH_ROCKIES", "SOUTH_ROCKIES", "TIBET" and "ZAGROS".
+    colormap : str, optional
+        Colormap keyword (accessible via matplotlib.colormaps). 
+        Default is "jet".
+    map_range : list, optional
+        Minimum and maximum value for the colormap, expressed in 
+        kilometers. Default is [-5, 5].
+
+    Returns
+    -------
+    image : matplotlib image object
+        Object necessary to extract information on the drawn topography.
+    """
 
     # Load grids 
     root_path = os.path.dirname(os.path.dirname(__file__))
@@ -103,18 +181,18 @@ def add_topography(fig, ax,
     
     # Plot mdat surface colormap
     extent = mlon[0,:][0] - 1, mlon[0,:][-1] + 1, mlat[:,0][-1] - 1, mlat[:,0][0] + 1
-    im = ax.imshow(mdat/1e3, origin='lower', extent=extent, cmap=colormap, 
-                   vmin=map_range[0], vmax=map_range[1])
+    image = ax.imshow(mdat/1e3, origin='lower', extent=extent, cmap=colormap, 
+                      vmin=map_range[0], vmax=map_range[1])
     
     
     # Add colorbar
-    add_colorbar(fig, ax, im, label="Elevation (km)")
+    add_colorbar(fig, ax, image, label="Elevation (km)")
         
     
     # Finish map
     set_map(fig, ax)
     
-    return im
+    return image
     
     
     
@@ -122,6 +200,30 @@ def add_gravity(fig, ax,
                 mountain="ANDES",
                 colormap="bwr",
                 map_range=[-600, 600]):
+    """
+    Add Free-air gravity anomaly to a map.
+
+    Parameters
+    ----------
+    fig : matplotlib figure object
+        
+    ax : matplotlib axis object
+    
+    mountain : str, optional
+        Keyword for the orogen. Available options are "ANDES", "CENTRAL_ROCKIES",
+        "NORTH_ROCKIES", "SOUTH_ROCKIES", "TIBET" and "ZAGROS".
+    colormap : str, optional
+        Colormap keyword (accessible via matplotlib.colormaps). 
+        Default is "jet".
+    map_range : list, optional
+        Minimum and maximum value for the colormap, expressed in mGal. 
+        Default is [-5, 5].
+
+    Returns
+    -------
+    image : matplotlib image object
+        Object necessary to extract information on the drawn gravity anomaly.
+    """
 
     # Load grids 
     root_path = os.path.dirname(os.path.dirname(__file__))
@@ -131,18 +233,18 @@ def add_gravity(fig, ax,
     
     # Plot mdat surface colormap
     extent = mlon[0,:][0] - 1, mlon[0,:][-1] + 1, mlat[:,0][-1] - 1, mlat[:,0][0] + 1
-    im = ax.imshow(mdat, origin='lower', extent=extent, cmap=colormap, 
-                   vmin=map_range[0], vmax=map_range[1])
+    image = ax.imshow(mdat, origin='lower', extent=extent, cmap=colormap, 
+                      vmin=map_range[0], vmax=map_range[1])
     
     
     # Add colorbar
-    add_colorbar(fig, ax, im, label="Free-air gravity anomaly (mGal)")
+    add_colorbar(fig, ax, image, label="Free-air gravity anomaly (mGal)")
 
     
     # Finish map    
     set_map(fig, ax)
     
-    return im
+    return image
 
 
 
@@ -150,8 +252,8 @@ def geodesic_distance(point1_lon, point1_lat,
                       point2_lon, point2_lat,
                       radius = 6371e3):
     
-    """ Calculates the geodesic distance between two point on a sphere,
-    based on the Vincenty inverse problem formula. """
+    """ Calculates the geodesic distance between two point on a sphere
+    of given radius. """
     
     
     # Turn input coordinates from sph to radians

@@ -28,7 +28,7 @@ def elastic_bending_degree(elastic_thickness, density_crust=2700, density_mantle
     Returns
     -------
     degree : array
-        2-column array whwre [0] contains the wavelength value (m), and 
+        2-column array where [0] contains the wavelength value (m), and 
         [1] contains the associated degree of deflection. Degree of deflection
         are values between 0 and 1, with 0 corresponding to no deflection, 
         while 1 corresponds to the maximum deflection. In other words, 0
