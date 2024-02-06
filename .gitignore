@@ -9,3 +9,4 @@ __pycache__/
 
 # Test files
 test*.py
+test*.ipynb
