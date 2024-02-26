@@ -12,6 +12,52 @@ from math import sin, cos, atan2, sqrt, radians
 from tpx_dependencies import load_TPX, add_colorbar
 from figure_dependencies import create_figure
 
+def add_residual_bathymetry_hawaii(fig, ax,
+                                   colormap="jet",
+                                   map_range=[-2500, 2500]):
+    """
+    Add the residual bathymetry of the Hawaii region to a map.
+
+    Parameters
+    ----------
+    fig : matplotlib figure object
+        
+    ax : matplotlib axis object
+    
+    colormap : str, optional
+        Colormap keyword (accessible via matplotlib.colormaps). 
+        Default is "jet".
+    map_range : list, optional
+        Minimum and maximum value for the colormap, expressed in 
+        meters. Default is [-2500, 2500].
+
+    Returns
+    -------
+    image : matplotlib image object
+        Object necessary to extract information on the drawn topography.
+    """
+
+    # Load grid
+    root_path = os.path.dirname(os.path.dirname(__file__))
+    file_path = os.path.join(root_path, "DATA/RESIDUAL_BATHYMETRY_HAWAII.txt")
+    grid_data = np.loadtxt(file_path)
+
+    
+    # Plot mdat surface colormap
+    extent=[-170, -147, 12, 30]
+    image = ax.imshow(grid_data, origin='upper', extent=extent, cmap=colormap, 
+                      vmin=map_range[0], vmax=map_range[1])
+    
+    
+    # Add colorbar
+    add_colorbar(fig, ax, image, label="Residual bathymetry (m)")
+        
+    
+    # Finish map
+    #set_map(fig, ax)
+    
+    return image
+
 def basic_map(figsize=(5,5), dpi=100,
               xlim=(-180, 180),
               ylim=(-90, 90)):
