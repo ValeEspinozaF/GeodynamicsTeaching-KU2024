@@ -54,9 +54,11 @@ def add_residual_bathymetry_hawaii(fig, ax,
         
     
     # Finish map
-    #set_map(fig, ax)
+    set_map(fig, ax)
     
     return image
+
+
 
 def basic_map(figsize=(5,5), dpi=100,
               xlim=(-180, 180),
